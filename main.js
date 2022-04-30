@@ -13,7 +13,7 @@ import reducer from './reducers'
 const action = type => store.dispatch({type})
 
 //...
-import { helloSaga } from './sagas'
+import rootSaga, { helloSaga } from './sagas';
 
 
 const sagaMiddleware = createSagaMiddleware()
@@ -21,7 +21,8 @@ const store = createStore(
   reducer,
   applyMiddleware(sagaMiddleware)
 )
-sagaMiddleware.run(helloSaga)
+// sagaMiddleware.run(helloSaga)
+sagaMiddleware.run(rootSaga)
 
 // const action = type => store.dispatch({type})
 
@@ -32,13 +33,15 @@ const incre = () => {
 
 function render() {
   ReactDOM.render(
-    <Counter
-      value={store.getState()}
-      // onIncrement={() => incre()}
-      onIncrement={() => action('INCREMENT')}
-      onDecrement={() => action('DECREMENT')} />,
-    document.getElementById('root')
-  )
+		<Counter
+			value={store.getState()}
+			// onIncrement={() => incre()}
+			onIncrement={() => action('INCREMENT')}
+			onDecrement={() => action('DECREMENT')}
+			onIncrementAsync={() => action('INCREMENT_ASYNC')}
+		/>,
+		document.getElementById('root')
+  );
 }
 
 render()
