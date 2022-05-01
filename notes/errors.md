@@ -18,3 +18,13 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 ![image-20220501002052444](errors.assets/image-20220501002052444.png)
 
 
+3. Error: put(channel, action): argument [object Object] is not a valid channel
+``` js
+	asserts.deepEqual(
+		iterator.next(products).value,
+		// put({ type: 'PRODUCTS_RECEIVED' }, products),
+		put({ type: 'PRODUCTS_RECEIVED', products }),
+		"fetchProducts should yield an Effect put({ type: 'PRODUCTS_RECEIVED', products })"
+	);
+```
+It can happen when you confuse API from call and put => put(myAction, arg1, arg2) should instead be put(myAction(arg1,arg2)) (put the action and not the action creator).
