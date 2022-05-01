@@ -39,6 +39,8 @@ function render() {
 			onIncrement={() => action('INCREMENT')}
 			onDecrement={() => action('DECREMENT')}
 			onIncrementAsync={() => action('INCREMENT_ASYNC')}
+			onLogin={() => action('LOGIN_REQUEST')}
+			onLoginOut={() => action('LOGOUT')}
 		/>,
 		document.getElementById('root')
   );

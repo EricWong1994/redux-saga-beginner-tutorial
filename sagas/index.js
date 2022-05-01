@@ -1,4 +1,11 @@
-import { put, takeEvery, all, call, takeLatest } from 'redux-saga/effects';
+import {
+	put,
+	takeEvery,
+	all,
+	call,
+	takeLatest,
+	take,
+} from 'redux-saga/effects';
 import Api from './apis';
 export const delay = ms => new Promise(res => setTimeout(res, ms));
 export const createUser = ms =>
@@ -39,10 +46,38 @@ export function* fetchProducts() {
 // 	yield put({ type: 'CREATE_USER' });
 // }
 
-// notice how we now only export the rootSaga
-// single entry point to start all Sagas at once
+function* authorize(user, password) {
+	try {
+		const token = yield call(Api.authorize, user, password);
+		yield put({ type: 'LOGIN_SUCCESS', token });
+		return token;
+	} catch (error) {
+		yield put({ type: 'LOGIN_ERROR', error });
+	}
+}
+
+function* loginFlow() {
+	while (true) {
+		const { user, password } = yield take('LOGIN_REQUEST');
+		const token = yield call(authorize, user, password);
+		console.log('token: ', token);
+		if (token) {
+			// yield call(Api.storeItem({ token }));
+			yield call(Api.storeItem, { token });
+			yield take('LOGOUT');
+			// yield call(Api.clearItem('token'));
+			yield call(Api.clearItem, 'token');
+		}
+	}
+}
+
 export default function* rootSaga() {
-	yield all([helloSaga(), watchIncrementAsync(), fetchProducts]);
+	yield all([
+		helloSaga(),
+		watchIncrementAsync(),
+		fetchProducts(),
+		loginFlow(),
+	]);
 	// yield takeEvery('CREATE_USER', createUserAsync);
 }
 
