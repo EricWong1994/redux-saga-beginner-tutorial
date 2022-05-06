@@ -3,10 +3,10 @@ const Api = {
 		return new Promise(resolve => {
 			setTimeout(() => {
 				resolve({
-					// data: `${params}-假数据`,
-					data: 'hello saga',
+					data: `${params}-假数据`,
+					// data: 'hello saga',
 				});
-			});
+			}, 3000);
 		});
 	},
 	authorize(params) {

@@ -8,6 +8,7 @@ import {
 	cancel,
 	cancelled,
 	fork,
+	select
 } from 'redux-saga/effects';
 import Api from './apis';
 export const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -35,8 +36,16 @@ export function* watchIncrementAsync() {
 
 export function* fetchProducts() {
 	try {
-		const products = yield call(Api.fetch, '/products');
+		// const products = yield call(Api.fetch, '/products');
+		const products = yield call(Api.authorize, '/products');
+		// const [products, repos] = yield [
+		// 	call(Api.fetch, '/products'),
+		// 	call(Api.fetch, '/repos')
+		// ]
+		console.log('products: ', products);
+		// const repos = yield call(Api.fetch, '/repos');
 		yield put({ type: 'PRODUCTS_RECEIVED', products });
+		// yield put({ type: 'REPOS_RECEIVED', repos });
 	} catch (error) {
 		yield put({ type: 'PRODUCTS_REQUEST_FAILED', error });
 	}
@@ -69,11 +78,31 @@ function* loginFlow() {
 	}
 }
 
+function* learnSaga() {
+	yield takeEvery('INCREMENT', function*() {
+		// const state = select()
+		// const state = select(state => state.user)
+		// 记得加yield，否则拿不到state
+		const state = yield select(state => state.user)
+		console.log('state: ', state);
+	})
+
+	// take只执行一次，需要写在while循环中
+	yield take('INCREMENT');
+	console.log('take')
+}
+
+// export default function* rootSaga() {
+// 	yield all([
+// 		helloSaga(),
+// 		watchIncrementAsync(),
+// 		fetchProducts(),
+// 		// fetchProducts,
+// 		loginFlow(),
+// 	]);
+// }
 export default function* rootSaga() {
 	yield all([
-		helloSaga(),
-		watchIncrementAsync(),
-		fetchProducts(),
-		loginFlow(),
+		learnSaga()
 	]);
 }
